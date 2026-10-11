@@ -1,0 +1,200 @@
+# Lab 4 — More orders than there are orders
+
+**ECBS5294 — Working with Data · Session 2, Block 4 · a team lab**
+
+## Start here
+
+| | |
+|---|---|
+| **The question** | How many paid orders does each order status have, and what is the average order value? |
+| **The files** | `data/raw/orders.csv` and `data/raw/order_payments.csv`, from Olist. The report is `notebooks/report.ipynb`. |
+| **What is wrong** | A colleague's report, which you meet in section D of the notebook, runs without an error and counts more paid orders than there are orders. |
+| **What you hand in** | The notebook, on the lab's Moodle checkpoint, before you leave: the keyboard uploads it; everyone else pastes its *Your team* line as their submission text. Nothing else. |
+| **First thing to do** | Take a role you have not had today (a team of two swaps), and write your names in the notebook's *Your team* cell. Then the keyboard runs the three setup cells, and the team starts at section A. |
+
+## Get the project
+
+The new keyboard person cloned it during the stretch. If not: in the terminal (Git Bash on Windows, Terminal on
+macOS), in the folder where you keep course work:
+
+```bash
+git clone https://github.com/earino/ecbs5294-lab04-repeated-rows.git
+cd ecbs5294-lab04-repeated-rows
+uv sync
+```
+
+Open **this folder** in VS Code (*File → Open Folder…*; trust the authors if asked), open `notebooks/report.ipynb`,
+pick the `.venv` kernel, and run the first three code cells. The first prints the folder it is working in: it must be
+this project's folder. The second makes each file a view with the file's name; the third gets the checks ready. Then work top to bottom, running each
+cell as you come to it. (After a kernel restart, run the cells again from the top down to the one you had reached,
+and no further: *Run All* is for the finished notebook. If the clone or the sync failed, put a hand up at the start of the lab: a TA comes to you first. If you ran everything by accident: *Clear All Outputs*, restart the kernel, run the three setup cells, and
+start again at section A; nothing is lost but the surprise. If a cell went missing, put a hand up: staff help you get it
+back without losing your work.)
+
+`notebooks/lecture.ipynb` holds Block 4's queries, as the slides showed them, for review. This lab is
+`notebooks/report.ipynb`.
+
+## How your team works
+
+Three people, one team for the whole day, **one work laptop**. Teams are the people sitting next to you: three in
+a row. If your row leaves two people, stay two; if it leaves one, join the team beside you. The work laptop is the
+keyboard person's, so when the roles change for the second lab, a different laptop is the work laptop. Each of you
+holds one role for this lab:
+
+| Role | What you do |
+|---|---|
+| **Keyboard** | You type on the work laptop, and only what the team has agreed. Say what a cell will do before you run it. |
+| **AI** | You may use an AI assistant on your own device. Nobody else sees that screen, and you never type on the work laptop: what the assistant says reaches the team by your voice. **For the first five minutes you share nothing from it.** Your own ideas you share from the first minute. |
+| **Checker** | Before a query runs, you say which number must stay the same, go up or go down, and why. After it runs, you compare. When a check prints, you read its lines out, and you say what one row of the table is. |
+
+- **Say it before you type it.** Where the notebook asks for a query or a blank, the two of you who are not at the
+  keyboard say what goes there, out loud; then the keyboard types what the team agrees on. Nothing is written on paper.
+- **What works in the AI role:** agree the question with the team before you ask it; tell the assistant what one row
+  of each table is; ask it to explain, or to suggest a check, rather than to write the query; and say what it said in
+  your own words. It cannot see the data: the team tests whatever it says.
+- **In the second lab of the day you take a role you have not had today.** The simple way: keyboard becomes checker,
+  checker becomes AI, AI becomes keyboard.
+- A team of two has no separate checker: the AI person checks. In the second lab the two of you swap. A team of four
+  has two checkers.
+- **The only writing is in the notebook:** everyone's name and role in its first cell, your queries, one comment on
+  what one row is, one comment on why the report was wrong. The checks print the rest. There is no note to keep.
+- Nobody is graded as a team. The homework, the knowledge check and the exam are yours alone: make sure you could
+  write every query in this notebook yourself.
+
+## What is broken
+
+Nothing, in the first three sections of the notebook: there your team writes queries that work, and a join of its
+own.
+
+The report is in **section D**. A colleague wrote it for the board pack. It says customers paid **435,300.95 BRL**,
+and under that is a table: for each order status, the number of paid orders and the average order value. The orders
+column of that table adds up to **2,790 paid orders**.
+
+`orders.csv` has **2,653 rows**, one per order. A shop cannot have more paid orders than it has orders: 2,790 cannot
+be true.
+
+Nothing errors. When you get there, find out why before you change anything.
+
+Two definitions, from finance. They are what the report's words mean:
+
+- A **paid order** is an order with at least one payment row in `order_payments.csv`.
+- **Average order value** is what was paid divided by the number of paid orders, both over the same orders.
+
+The files, one table each:
+
+| File | What it holds |
+|---|---|
+| `orders.csv` | the orders: which customer, when, the order's status |
+| `order_payments.csv` | the payments made for the orders: type, installments, value |
+| `order_items.csv`, `customers.csv` | the lecture's tables; this lab does not need them |
+
+This sample was selected so that the situations this lab is about are present. It is not a representative sample of
+Olist (`DATA.md` says how it was drawn).
+
+**Money matches when it agrees to the cent:** `abs(a - b) < 0.005`. Never compare money with `==`: two correct sums
+of the same rows can differ in their last decimal. Counts are whole numbers, and must be exactly equal.
+
+## What you must produce
+
+Work in the notebook, under **Your work starts here**, top to bottom, running each cell as you come to it:
+
+1. **Look first** (section A). Five rows of `order_payments`, the orders by status (supplied), then one count from
+   Session 1. Say each one out loud
+   before the keyboard types it.
+2. **Your join** (section B). What was paid, and how many payment rows, by order status: payments joined to their orders, written by you from
+   an empty cell, as a view. Its check is written for you: four lines must say `PASS`. Then one comment: what is one
+   row of the join?
+3. **The orders with more than one payment row** (section C). A `GROUP BY` with a `HAVING`, saved as a view, and a
+   join on that view, both written by you. Each has a supplied check, which the checker reads out.
+4. **Your colleague's report: the same join, a different question** (section D). The report's two cells, which you
+   run and read out; a supplied comparison. Then **the repair**: your team rewrites the report query: the table of paid
+   orders, average order value and amount paid, by order status, with every order counted once. Its first line is a
+   comment for you to finish: one sentence on why the report counted 2,790.
+5. **The check** (section E). Supplied. It prints the evidence, then five numbered lines. When the five say `PASS`,
+   the table has passed every check written here. A check tests only what it was written to test: before you call
+   it done, say what one row of your table is, and read its rows.
+6. **The last ten minutes**, below, at minute 33, finished or not. Then, before you leave, **the checkpoint**: the
+   keyboard saves the notebook and uploads it to Moodle; everyone else pastes the *Your team* line as their
+   submission text.
+
+**If there is time, after section E passes:** the notebook's last two sections; choose either.
+
+## Rules
+
+- **For the first five minutes the AI person shares nothing from the assistant.** After that, what they like, by
+  voice. They never type on the work laptop, and nobody else sees their screen.
+- **Never edit `data/raw/`.** The raw data is the evidence. Fix the query.
+- **Fix the cause, with a query.** One changed word that makes one number look right is not the repair: section E
+  checks five things, and it will say which one is still wrong.
+- Each of you must be able to explain every line your team hands in: at minute 33 the team next to you will ask
+  why it was wrong.
+
+## Hints, if stuck
+
+Each hint is for the section it names. Staff point the room to them at minutes 5, 10 and 15; read one when your
+team is in its section and stuck, not before.
+
+**At minute 18, a team not yet in section D puts a hand up.** Staff help you say your two queries and type them: they
+are your own `HAVING` and your own join, and nobody skips them.
+
+1. Section B: the status is on `orders`, the money on `order_payments`, and `order_id` is in both. Block 3's cell 3
+   is the shape: `FROM`, `JOIN … ON`, then `GROUP BY`. Before you read the check, say what one row of the join is.
+2. Section D, the report's number. Section C's list is the orders with more than one payment row. The report, in section D, counts paid orders. Compare
+   its number with A2's orders and A3's payment rows: which one is it? Then, in the report's second cell: what did
+   `COUNT(*)` count, and what did `AVG(p.payment_value)` average? Lecture cells 2 and 3.
+3. Section D, the repair. An order paid in several parts has several rows in `order_payments`, so the report counts it once per payment,
+   and averages payments. The repair is the lecture's: one row per order first, then join. Lecture cells 7 and 8; cell
+   10 is the `WITH` that adds up money.
+
+## If there is time
+
+After section E passes, choose either.
+
+**One more delivered order:** `orders.csv` has one more delivered order than your table. The notebook's section *If there is time: one more delivered order* asks which order it is,
+and why your table does not count it. Block 3, cells 9 and 10, are the query; they are copied at the end of this project's
+`notebooks/lecture.ipynb`. The what-if at minute 33 is about this order.
+
+**Your own question:** three questions about how the orders were paid. Pick one, guess, write it, and show your
+answer to the team next to you. Nothing checks it.
+
+## The last ten minutes
+
+At minute 33, finished or not, your team turns to **the team next to you**. Two teams, one laptop at a time. If no
+team is left to pair with, join the pair beside you.
+
+At your laptop, finished or not, start with one result you found interesting; then the last step you reached. If
+you repaired the report, show why it was wrong and what the check printed. About two minutes, pointing at the screen.
+The other team asks one question. If you reached the report: **why was it wrong, not just where?** If not: **what is
+one row of what you showed?** Then swap: their laptop, their turn.
+
+Then **the what-if question on the slide**, both teams together: commit to an answer before anyone runs a query; you
+may run it after you have committed. If anyone is unsure, or the two teams disagree, put a hand up: staff come to
+you first. Then the answer to the what-if, for everyone, and what happened in the report.
+
+**The lab ends in the room, finished or not.** Before you leave: the lab's **checkpoint on Moodle**. The keyboard
+saves the notebook and uploads `notebooks/report.ipynb` as it is; everyone else pastes the *Your team* line (the
+names and roles) as their submission text. That is what "complete" means; nobody signs you off, and there is nothing
+to finish at home. The solved notebook is on Moodle two days later.
+
+## If you got lost: how to reset
+
+Both of these **destroy work**. Read before running.
+
+**Discard uncommitted changes (destructive)** — throw away edits and new files; keep your commits:
+
+```bash
+git restore --staged --worktree .    # every tracked file back to the last commit, staged or not
+git clean -fd                        # and remove new, untracked files
+```
+
+> ⚠️ Permanently deletes uncommitted changes, staged or not, and any new untracked files.
+
+**Full reset to the starter state (destructive)** — back to exactly what you cloned; throws away your commits too:
+
+```bash
+git reset --hard origin/main
+git clean -fdx
+```
+
+> ⚠️ Discards your local commits and uncommitted changes. The `-x` also removes ignored files — the `.venv/`
+> environment among them — so the folder matches a fresh clone. `uv sync` rebuilds the environment in a minute.
